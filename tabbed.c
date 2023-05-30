@@ -103,7 +103,6 @@ static void expose(const XEvent *e);
 static void focus(int c);
 static void focusin(const XEvent *e);
 static void focusonce(const Arg *arg);
-static void focusurgent(const Arg *arg);
 static void fullscreen(const Arg *arg);
 static char *getatom(int a);
 static int getclient(Window w);
@@ -117,7 +116,6 @@ static void killclient(const Arg *arg);
 static void manage(Window win);
 static void maprequest(const XEvent *e);
 static void move(const Arg *arg);
-static void movetab(const Arg *arg);
 static void propertynotify(const XEvent *e);
 static void resize(int c, int w, int h);
 static void rotate(const Arg *arg);
@@ -128,7 +126,6 @@ static void setup(void);
 static void sigchld(int unused);
 static void spawn(const Arg *arg);
 static int textnw(const char *text, unsigned int len);
-static void toggle(const Arg *arg);
 static void unmanage(int c);
 static void unmapnotify(const XEvent *e);
 static void updatenumlockmask(void);
@@ -507,22 +504,6 @@ focusonce(const Arg *arg)
 }
 
 void
-focusurgent(const Arg *arg)
-{
-	int c;
-
-	if (sel < 0)
-		return;
-
-	for (c = (sel + 1) % nclients; c != sel; c = (c + 1) % nclients) {
-		if (clients[c]->urgent) {
-			focus(c);
-			return;
-		}
-	}
-}
-
-void
 fullscreen(const Arg *arg)
 {
 	XEvent e;
@@ -789,35 +770,6 @@ move(const Arg *arg)
 {
 	if (arg->i >= 0 && arg->i < nclients)
 		focus(arg->i);
-}
-
-void
-movetab(const Arg *arg)
-{
-	int c;
-	Client *new;
-
-	if (sel < 0)
-		return;
-
-	c = (sel + arg->i) % nclients;
-	if (c < 0)
-		c += nclients;
-
-	if (c == sel)
-		return;
-
-	new = clients[sel];
-	if (sel < c)
-		memmove(&clients[sel], &clients[sel+1],
-		        sizeof(Client *) * (c - sel));
-	else
-		memmove(&clients[c+1], &clients[c],
-		        sizeof(Client *) * (sel - c));
-	clients[c] = new;
-	sel = c;
-
-	drawbar();
 }
 
 void
@@ -1115,12 +1067,6 @@ textnw(const char *text, unsigned int len)
 	XGlyphInfo ext;
 	XftTextExtentsUtf8(dpy, dc.font.xfont, (XftChar8 *) text, len, &ext);
 	return ext.xOff;
-}
-
-void
-toggle(const Arg *arg)
-{
-    *(Bool*) arg->v = !*(Bool*) arg->v;
 }
 
 void
