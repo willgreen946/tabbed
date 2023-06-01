@@ -42,6 +42,6 @@ static Key keys[] = {
 	{ MODKEY,     XK_h,      rotate,      { .i = -1 } },
 	{ MODKEY,     XK_Tab,    rotate,      { .i = 0 } },
 	{ MODKEY,     XK_grave,  spawn,       SETPROP("_TABBED_SELECT_TAB") },
-	{ MODKEY,     XK_k,      killclient,  { 0 } },
+	{ MODKEY,     XK_q,      killclient,  { 0 } },
 	{ 0,          XK_F11,    fullscreen,  { 0 } },
 };
